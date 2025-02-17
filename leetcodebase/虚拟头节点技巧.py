@@ -19,4 +19,4 @@ class Solution:
 
         pre.next = slow.next
 
-        return dummy.next 
+        return dummy.next
