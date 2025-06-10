@@ -102,6 +102,42 @@ class Solution:
                 if node.right is not None:
                     bfs.append(node.right)
 
+# balanced-binary-tree
+# D&C recursion
+# 分治法（从下到上），左子树平衡 && 右子树平衡 && 左右子树高度差 <= 1
+class Solution:
+    def isBalanced(self, root: TreeNode) -> bool:
+        def depth(node):
+            if node is None:
+                return 0, True
+            left_depth, bool_left = depth(node.left)
+            right_depth, bool_right = depth(node.right)
+            is_balanced = bool_left and bool_right and abs(left_depth-right_depth) <= 1
+            return max(left_depth, right_depth) + 1, is_balanced
+        _, out = depth(root)
+        return out
+# 使用后序遍历判断二叉树是否平衡
+# 
+class Solution:
+    def isBalanced_traversal(self, root: TreeNode) -> bool:
+        pass
+    def postorder_traversal(self, root: TreeNode) -> list:
+        postorder, s = [], []
+        lastvisit = None
+        node = root
+        while len(s)>0 or node is not None:
+            if node is not None:
+                s.append(node)
+                node = node.left
+            else:
+                
+                peek = s[-1]
+                if peek.right is not None and lastvisit != peek.right:
+                    node = peek.right
+                else:
+                    lastvisit = s.pop()
+                    postorder.append(node.val)
+        return postorder
 
 
 # build tree
