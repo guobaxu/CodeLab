@@ -139,6 +139,127 @@ class Solution:
                     postorder.append(node.val)
         return postorder
 
+class Solution:
+    def maxPathSum(self, root: TreeNode) -> int:
+        # 使用float('-inf')是因为节点值有负数
+        self.maxpath = float('-inf')
+        # 递归函数实现返回当前节点的最大路径和
+        def lagest_path_at(node):
+            # 边界条件
+            if node is None:
+                return float('-inf')
+            # 递归获取左右子树的最大路径和
+            P_left = lagest_path_at(node.left)
+            P_right = lagest_path_at(node.right)
+            # 更新全局最大路径和
+            self.maxpath = max(self.maxpath, node.val + max(P_left,0) + max(P_right,0), P_left, P_right)
+            return node.val + max(P_left, P_right, 0)
+        lagest_path_at(root)
+        return self.maxpath
+
+
+
+# binary-tree-zigzag-level-order-traversal
+# 思路：在BFS迭代模板上改用双端队列控制输出顺序，使用一个switch控制队列pop的方向
+class Solution:
+    def zigzagLevelOrder(self, root: TreeNode) -> list[list[int]]:
+        levels = []
+        if root is None:
+            return levels
+        bfs = deque([root])
+        pop_form_left = True
+        while len(bfs) > 0:
+            levels.append([])
+            level_size = len(bfs)
+            if pop_form_left:
+                for _ in range(level_size):
+                    node = bfs.popleft()
+                    levels[-1].append(node.val)
+                    if node.left is not None:
+                        bfs.append(node.left)
+                    if node.right is not None:
+                        bfs.append(node.right)
+            else:
+                for _ in range(level_size):
+                    node = bfs.pop()
+                    levels[-1].append(node.val)
+                    if node.right is not None:
+                        bfs.appendleft(node.right)
+                    if node.left is not None:
+                        bfs.appendleft(node.left)
+            pop_form_left = not pop_form_left
+            
+        return levels
+
+# validate-binary-search-tree
+# 思路1：使用中序遍历，判断返回的inorder列表是否有序，无法中途停止
+# 思路2：使用分治法，当节点的左子树的最大值小于节点值，且右子树的最小值大于节点值，且左右子树都合法时，说明是二叉搜索树
+
+class Solution:
+    def isValidBST(self, root:TreeNode) -> bool:
+        if root is None:
+            return True
+        def valid_min_max(node):
+            # boundary condition
+            is_valid = True
+            if node.left is not None:
+                l_isvalid, lmin, lmax = valid_min_max(node.left)
+                is_valid = is_valid and (lmax < node.val)
+            else:
+                l_isvalid, lmin = True, node.val
+            
+            if node.right is not None:
+                r_isvalid, rmin, rmax = valid_min_max(node.right)
+                is_valid = is_valid and (rmin > node.val)
+            else:
+                r_isvalid, rmax = True, node.val
+
+            return is_valid and l_isvalid and r_isvalid, lmin, rmax
+        
+        return valid_min_max(root)[0]
+    
+# 分治法代码完善过程，从基本组成到完整分支代码
+# 1.基本结构：边界条件，状态变化，当前节点操作
+def valid_min_max(node):
+    # boundary condition
+    if node is None:
+        return True, float('inf'), float('inf')
+    # subtree
+    # 左子树需要返回合法判断和左子树最大值
+    l_isvalid, lmax = valid_min_max(node.left)
+    # 右子树需要返回合法判断和右子树最小值
+    r_isvalid, rmin = valid_min_max(node.right)
+    # check current node
+    is_valid = l_isvalid and r_isvalid and (lmax < node.val) and (rmin > node.val)
+    return is_valid, min(lmax, node.val, rmin), max(lmax, node.val, rmin)
+# 2.统一函数返回条件：返回3个值，合法判断，树最小值，树最大值
+def valid_min_max(node):
+    if node is None:
+        return True, float('-inf'), float('inf')
+    l_isvalid, lmin, lmax = valid_min_max(node.left)
+    r_isvalid, rmin, rmax = valid_min_max(node.right)
+    is_valid = l_isvalid and r_isvalid and (lmax < node.val) and (rmin > node.val)
+    return is_valid, lmin, rmax
+
+# 3.但空节点的值返回不好控制，改变边界控制，将值检查放在if条件内部
+def valid_min_max(node):
+    is_valid = True
+    # subtree
+    if node.left is not None:
+        l_isvalid, lmin, lmax = valid_min_max(node.left)
+        is_valid = is_valid and (lmax < node.val)
+    else:
+        l_isvalid, lmin = True, node.val
+    if node.right is not None:
+        r_isvalid, rmin, rmax = valid_min_max(node.right)
+        is_valid = is_valid and (rmin > node.val)
+    else:
+        r_isvalid, rmax =True, node.val
+    return is_valid and l_isvalid and r_isvalid, lmin, rmax
+
+
+
+
 
 # build tree
 def build_tree(lst):
@@ -167,5 +288,5 @@ def build_tree(lst):
 
 if __name__ == "__main__":
     # 示例列表
-    lst = [1, 2, 3, 4, 5, None, 8, None, None, 6, 7, 9]
+    lst = [2,1,3]
     root = build_tree(lst)
