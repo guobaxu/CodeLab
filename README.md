@@ -30,3 +30,30 @@ https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/description/?envTyp
 ​
 - ​局部最优选择​​：在每一天，假设今天卖出，那么买入的价格必须是之前的最低价格。
 - ​全局最优解​​：所有可能的 (卖出价格 - 之前的最低价格)中的最大值就是答案。
+
+## 二分查找
+二分查找是一种减少搜索空间的查找方法，这种思想可以用在任何需要搜索的过程中
+**注意：**
+1. while循环终止条件：left <= right​
+2. 指针更新逻辑​：每次循环后，[left, right]的范围应减小，避免死循环。
+    - left = mid + 1（排除左半边）或者 right = mid - 1（排除右半边）
+
+错误示例：当 mid == left时，right = mid不会缩小区间，导致无限循环。
+```Python
+if nums[mid] > target:
+    right = mid  # 错误：可能导致死循环（如 nums=[2,5], target=1, left==right）一直while循环
+```
+
+在二分查找中，​​始终使用 while left <= right​​，并严格遵循以下模板：
+```Python
+left, right = 0, len(nums)-1
+while left <= right:
+    mid = (left + right) // 2
+    if nums[mid] == target:
+        return mid
+    elif nums[mid] < target:
+        left = mid + 1
+    else:
+        right = mid - 1
+return -1
+```
