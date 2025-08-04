@@ -125,3 +125,19 @@ mapped = list(map(lambda x: "Even" if x % 2 == 0 else "Odd", numbers))
 filtered = list(filter(lambda x: "Even" if x % 2 == 0 else False, numbers))
 # 使用三元表达式与列表推导式结合
 filtered_list = ["Even" if x % 2 == 0 else "Odd" for x in numbers]
+
+'''
+常用内建函数
+'''
+# max(iterable, key=func),前者是可迭代对象，后者是可选的函数名
+from collections import Counter
+nums = [1, 2, 3, 2, 1, 4, 5, 5]
+counts = Counter(nums)
+max(counts.keys(), key=counts.get)
+
+
+'''
+python 中的 collections 模块
+collections是 Python 标准库中提供的高性能容器数据类型模块，
+扩展了内置容器（list、dict、set、tuple）的功能。
+'''
