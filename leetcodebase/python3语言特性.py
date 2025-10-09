@@ -5,6 +5,9 @@ introduction:介绍一下语言技巧
 """
 # 参考https://github.com/dashidhy/algorithm-pattern-python/blob/master/introduction/python.md
 
+'''
+数组特点和技巧
+'''
 # 数组初始化
 # 初始化一个长度为 N 的一维数组
 N = 10
@@ -14,10 +17,20 @@ Array = [0] * N
 Matrix = [[0] * N for _ in range(M)] # 思考：可以写成 [[0] * N] * M 吗？
 Matrix2 = [[0] * N] * M # 也可以
 
+list.index()    # 返回第一个匹配元素的索引，元素必须在list内
 
+
+'''
+在 Python 中，a, b = b, a是一种 ​​优雅且高效​​ 的变量交换方式，它可以在 ​​不借助临时变量​​ 的情况下交换两个变量的值。
+它的底层实现元组解包Tuple Unpacking
+'''
 a, b, c = 1,2,3
 # python风格交换元素值
 a, b = b, a
+#等效代码
+temp_tuple = (b, a)  # 先计算右侧，生成元组
+a, b = temp_tuple     # 再解包赋值
+
 
 # 判断 a，b，c 是否相等，Python里可以直接写连等
 if a == b == c:
@@ -88,4 +101,43 @@ queue.popleft()                 # The first to arrive now leaves
 collections 库
 Python 的 collections 库在刷题时会经常用到，它拓展了一些Python中基础的类，提供了更多功能，
 例如 defaultdict 可以预设字典中元素 value 的类型，自动提供初始化，Counter 可以直接统计元素出现个数等。
+'''
+
+'''
+Python 的三元表达式（x if condition else y）是一种简洁的条件赋值方式，相比传统的 if-else语句，它在 ​​代码简洁性、可读性和功能性​​ 上有显著优势。
+'''
+condition = True
+if condition:
+    result =  True
+else:
+    result = False
+
+# 三元表达式
+result = True if condition else False
+
+#三元表达式可以与 lambda、map、filter等结合使用：
+# 使用三元表达式与 lambda 结合
+func = lambda x: "Even" if x % 2 == 0 else "Odd"
+# 使用三元表达式与 map 结合
+numbers = [1, 2, 3, 4, 5]
+mapped = list(map(lambda x: "Even" if x % 2 == 0 else "Odd", numbers))
+# 使用三元表达式与 filter 结合
+filtered = list(filter(lambda x: "Even" if x % 2 == 0 else False, numbers))
+# 使用三元表达式与列表推导式结合
+filtered_list = ["Even" if x % 2 == 0 else "Odd" for x in numbers]
+
+'''
+常用内建函数
+'''
+# max(iterable, key=func),前者是可迭代对象，后者是可选的函数名
+from collections import Counter
+nums = [1, 2, 3, 2, 1, 4, 5, 5]
+counts = Counter(nums)
+max(counts.keys(), key=counts.get)
+
+
+'''
+python 中的 collections 模块
+collections是 Python 标准库中提供的高性能容器数据类型模块，
+扩展了内置容器（list、dict、set、tuple）的功能。
 '''

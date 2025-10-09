@@ -7,10 +7,7 @@ introduction:字符串匹配
 class Solution:
     def searchstr(self, source: str, target: str) -> int:
         n, m = len(source), len(target)
-        
-        if m == 0:
-            return 0
-
+        # 滑动窗口，注意n-m之后要+1，当n==m时还是要有range(1)才能循环
         for i in range(n-m+1):
             if source[i:i+m] == target:
                 return i
