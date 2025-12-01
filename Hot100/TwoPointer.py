@@ -39,3 +39,57 @@ class Solution:
                     nums[slow], nums[fast] = nums[fast], nums[slow]
                 slow += 1
     
+    # 盛最多水的容器
+    def maxArea(self, height: List[int]) -> int:
+        # 1. 初始化双指针
+        left, right = 0, len(height) - 1
+        max_area = 0
+
+        # 2. 优化：预先获取最大高度，用于剪枝
+        max_h = max(height)
+
+        while left < right:
+            # 计算当前面积：宽度 * 短板高度
+            current_width = right - left
+            current_h = min(height[left], height[right])
+
+            # 如果当前的短板高度 * 宽度 > 历史最大，则更新
+            # (这里稍微改写了一下，减少了一次乘法调用，利用 max 只比较更清晰)
+            if current_width * current_h > max_area:
+                max_area = current_width * current_h
+
+            # 3. 剪枝核心：如果当前已知最大面积 >= 理论剩余最大面积，直接收工
+            # 注意：这里的 current_width 是还没移动指针时的宽度
+            # 实际上移动后宽度会-1，判断条件会更严苛，你的写法放在移动后判断完全没问题
+            # 这里为了逻辑展示放在移动前判断也可以，只要逻辑自洽即可
+            if max_area >= max_h * current_width:
+                break
+
+            # 4. 移动策略：贪心，保留长板，移动短板
+            if height[left] <= height[right]:
+                left += 1
+            else:
+                right -= 1
+
+        return max_area
+    
+    # 三个数之和
+    # for数组每个元素，对剩余的部分双指针搜索，无序数组的指针移动判断是什么？可以先排序为升序数组
+    # BigO是N2
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        sorted_nums = sorted(nums)
+        res = []
+        for i in range(len(nums)):
+            left, right = i+1, len(nums)-1
+            sums = nums[i] + nums[left] + nums[right]
+            while left < right and sums != 0:
+                # 数组升序，右侧是大数，和大于零时，应减小
+                if sums > 0:
+                    right -= 1
+                else:
+                    left += 1
+                sums = nums[i] + nums[left] + nums[right]
+            if sums == 0:
+                res.append([nums[i],nums[left],nums[right]])
+        return res
+                
