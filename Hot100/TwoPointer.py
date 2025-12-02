@@ -77,19 +77,68 @@ class Solution:
     # for数组每个元素，对剩余的部分双指针搜索，无序数组的指针移动判断是什么？可以先排序为升序数组
     # BigO是N2
     def threeSum(self, nums: List[int]) -> List[List[int]]:
-        sorted_nums = sorted(nums)
+        nums.sort()
         res = []
-        for i in range(len(nums)):
-            left, right = i+1, len(nums)-1
-            sums = nums[i] + nums[left] + nums[right]
-            while left < right and sums != 0:
-                # 数组升序，右侧是大数，和大于零时，应减小
-                if sums > 0:
+        n = len(nums)
+        for i in range(n-2):
+            # 去重逻辑 1：如果当前元素与前一个元素相同，则跳过
+            # 只有当我已经处理过这个数字，再次遇到它时才跳过
+            # 向前看
+            if i > 0 and nums[i] == nums[i-1]:
+                continue
+            left, right = i+1, n-1
+
+            while left < right:
+                total = nums[i] + nums[left] + nums[right]
+                if total == 0:
+                    res.append([nums[i],nums[left],nums[right]])
+                    left += 1
+                    right -= 1
+                    # 去重逻辑2：如果left和left-1相同，则left右移
+                    while left < right and nums[left] == nums[left-1]:
+                        left += 1
+                    # 去重逻辑2：如果right和right+1相同，则right左移
+                    while left < right and nums[right] == nums[right+1]:
+                        right -= 1
+
+                elif total > 0:
                     right -= 1
                 else:
                     left += 1
-                sums = nums[i] + nums[left] + nums[right]
-            if sums == 0:
-                res.append([nums[i],nums[left],nums[right]])
         return res
                 
+    # 接雨水
+    # 双指针解法
+    # 对于位置 i 的柱子，它能存多少水，取决于：
+    # $$\text{水深} = \min(\text{左边最高的墙}, \text{右边最高的墙}) - \text{当前柱子高度}$$
+
+    def trap(self, height: List[int]) -> int:
+        if not height:
+            return 0
+            
+        # 1. 初始化
+        left, right = 0, len(height) - 1
+        left_max, right_max = 0, 0
+        ans = 0
+        
+        # 2. 核心循环
+        while left < right:
+            # 预判：分别更新当前左右能看到的最高墙
+            left_max = max(left_max, height[left])
+            right_max = max(right_max, height[right])
+            
+            # 3. 决策：哪边是短板，就处理哪边
+            # 核心逻辑：如果 left_max < right_max，说明对于 left 而言，
+            # 右边一定有一堵墙(即 right_max) 比 left_max 高。
+            # 根据木桶效应，left 处的存水量完全由 left_max 决定。
+            if left_max < right_max:
+                # 谁是短板，就算谁，然后移动谁。
+                # 当前这个指针位置的命运（水位），已经被那边的“短板”彻底决定了，算完就可以扔掉了，进入下一个位置。
+                ans += left_max - height[left]
+                left += 1
+            else:
+                # 同理，如果 right_max <= left_max，瓶颈在右边
+                ans += right_max - height[right]
+                right -= 1
+                
+        return ans
